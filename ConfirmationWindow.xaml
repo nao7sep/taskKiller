@@ -1,0 +1,14 @@
+﻿<Window x:Name="mWindow" x:Class="taskKiller.ConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:taskKiller"
+        mc:Ignorable="d"
+        Title="確認" Width="600" Height="200" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="mWindow_Loaded" PreviewKeyDown="mWindow_PreviewKeyDown">
+    <Grid>
+        <TextBox x:Name="mMessage" Margin="10,10,10,39" Padding="4" FontSize="15" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsTabStop="False" IsReadOnly="True" />
+        <Button x:Name="mYes" Content="はい" HorizontalAlignment="Right" Margin="0,0,105,10" VerticalAlignment="Bottom" Width="90" Height="24" Click="mYes_Click" />
+        <Button x:Name="mNo" Content="いいえ" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="90" Height="24" Click="mNo_Click" />
+    </Grid>
+</Window>

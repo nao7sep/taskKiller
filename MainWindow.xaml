@@ -1,0 +1,113 @@
+﻿<Window x:Name="mWindow" x:Class="taskKiller.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:taskKiller"
+        mc:Ignorable="d"
+        Title="taskKiller" Width="1280" Height="720" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="Window_Loaded" LocationChanged="mWindow_LocationChanged" SizeChanged="mWindow_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown" Closed="mWindow_Closed">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="mLeftColumn" Width="3*" />
+            <ColumnDefinition x:Name="mRightColumn" Width="2*" />
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="mTasks" Margin="10,10,120,34" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="mTasks_SelectionChanged" PreviewKeyDown="mTasks_PreviewKeyDown" PreviewMouseDown="mTasks_PreviewMouseDown">
+            <!-- Fri, 28 Jun 2019 20:55:37 GMT
+            // 全面的に書き直し、「ListBoxItem に関する紆余曲折.txt」もそうした
+            // こちらにコメントを書くとうるさくなるので、テキストファイルの方に全て書く -->
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border Name="xTaskBorder" SnapsToDevicePixels="True" Margin="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding Background}" Padding="0">
+                                    <TextBlock Name="xTaskContent" Text="{Binding Content}" Margin="0" Padding="{x:Static local:iUtility.TaskListItemPadding}" Foreground="{TemplateBinding Foreground}" FontWeight="{TemplateBinding FontWeight}" TextWrapping="Wrap" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSpecial}" Value="True">
+                                        <Setter TargetName="xTaskBorder" Property="BorderBrush" Value="Yellow" />
+                                        <Setter TargetName="xTaskBorder" Property="Background" Value="Yellow" />
+                                        <Setter TargetName="xTaskContent" Property="Foreground" Value="Black" />
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="xTaskBorder" Property="BorderBrush" Value="Cyan" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="xTaskBorder" Property="BorderBrush" Value="Lime" />
+                                        <Setter TargetName="xTaskBorder" Property="Background" Value="Chartreuse" />
+                                        <Setter TargetName="xTaskContent" Property="Foreground" Value="Black" />
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding State}" Value="Soon">
+                                        <Setter TargetName="xTaskContent" Property="Foreground" Value="DeepSkyBlue" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="Now">
+                                        <Setter TargetName="xTaskContent" Property="Foreground" Value="DeepPink" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsBold}" Value="True">
+                                        <Setter TargetName="xTaskContent" Property="FontWeight" Value="Bold" />
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
+        <Button x:Name="mCreateTask" Content="追加" HorizontalAlignment="Right" Margin="0,10,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mCreateTask_Click" />
+        <Button x:Name="mUpdateTask" Content="修正" HorizontalAlignment="Right" Margin="0,39,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mUpdateTask_Click" />
+        <Button x:Name="mDeleteTask" Content="削除" HorizontalAlignment="Right" Margin="0,68,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mDeleteTask_Click" />
+        <Button x:Name="mUp" Content="上へ" HorizontalAlignment="Right" Margin="0,97,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mUp_Click" />
+        <Button x:Name="mDown" Content="下へ" HorizontalAlignment="Right" Margin="0,126,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mDown_Click" />
+        <Button x:Name="mState" Content="状態を変更" HorizontalAlignment="Right" Margin="0,155,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mState_Click" />
+        <Button x:Name="mDone" Content="完了" HorizontalAlignment="Right" Margin="0,184,5,0" VerticalAlignment="Top" Width="110" Height="24" Foreground="DeepSkyBlue" FontWeight="Bold" Click="mDone_Click" />
+        <Button x:Name="mRepeat" Content="繰り返す" HorizontalAlignment="Right" Margin="0,213,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mRepeat_Click" />
+        <Button x:Name="mCancel" Content="却下" HorizontalAlignment="Right" Margin="0,242,5,0" VerticalAlignment="Top" Width="110" Height="24" Foreground="DeepPink" FontWeight="Bold" Click="mCancel_Click" />
+        <Button x:Name="mPriority" Content="優先" HorizontalAlignment="Right" Margin="0,271,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mPriority_Click" />
+        <Button x:Name="mPostpone" Content="先送り" HorizontalAlignment="Right" Margin="0,300,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mPostpone_Click" />
+        <Button x:Name="mShuffle" Content="シャッフル" HorizontalAlignment="Right" Margin="0,329,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mShuffle_Click" />
+        <Button x:Name="mSubtasks" Content="新しいリスト" HorizontalAlignment="Right" Margin="0,358,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mSubtasks_Click" />
+        <Button x:Name="mExport" Content="デスクトップへ" HorizontalAlignment="Right" Margin="0,387,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mExport_Click" />
+        <Button x:Name="mExportTo" Content="他リストへ" HorizontalAlignment="Right" Margin="0,416,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mExportTo_Click" />
+        <Button x:Name="mMail" Content="メール" HorizontalAlignment="Right" Margin="0,445,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mMail_Click" />
+        <Button x:Name="mMailNow" Content="今すぐをメール" HorizontalAlignment="Right" Margin="0,474,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mMailNow_Click" />
+        <Button x:Name="mAllToFront" Content="全て最前面に" HorizontalAlignment="Right" Margin="0,503,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mAllToFront_Click" />
+        <Button x:Name="mReload" Content="再読み込み" HorizontalAlignment="Right" Margin="0,532,5,0" VerticalAlignment="Top" Width="110" Height="24" Background="Yellow" Foreground="Black" Click="mReload_Click" />
+        <ListBox x:Name="mNotes" Grid.Column="1" Margin="5,10,105,34" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="mNotes_SelectionChanged" PreviewKeyDown="mNotes_PreviewKeyDown" PreviewMouseDown="mNotes_PreviewMouseDown">
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="BorderBrush" Value="Silver" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border Name="xNoteBorder" SnapsToDevicePixels="True" Margin="1" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding Background}" Padding="0">
+                                    <TextBlock Name="xNoteContent" Text="{Binding Content}" Margin="0" Padding="{x:Static local:iUtility.NotePadding}" TextWrapping="Wrap" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="xNoteBorder" Property="BorderBrush" Value="Cyan" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="xNoteBorder" Property="BorderBrush" Value="Lime" />
+                                        <Setter TargetName="xNoteBorder" Property="Background" Value="Chartreuse" />
+                                        <Setter TargetName="xNoteContent" Property="Foreground" Value="Black" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
+        <Button x:Name="mCreateNote" Content="追加" Grid.Column="1" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="90" Height="24" Click="mCreateNote_Click" />
+        <Button x:Name="mUpdateNote" Content="修正" Grid.Column="1" HorizontalAlignment="Right" Margin="0,39,10,0" VerticalAlignment="Top" Width="90" Height="24" Click="mUpdateNote_Click" />
+        <Button x:Name="mDeleteNote" Content="削除" Grid.Column="1" HorizontalAlignment="Right" Margin="0,68,10,0" VerticalAlignment="Top" Width="90" Height="24" Click="mDeleteNote_Click" />
+        <!-- 下部マージンは、ListBox に合わせると 34px となるが、TextBox のように枠線を表示しないため、文字列の部分だけを見るとかなり下に偏っている印象を受ける
+        // そこで、最初からある右の 10px と下の 10px が相殺とみなした上、80px から文字列の幅を引いて2で割ったらだいたいこのくらいだろうという 20px をさらに下に追加した
+        // おそらく厳密には 30px に近いが、64px にするとパッと見で離れすぎている印象があったため、20px と 30px の追加分のうち自然な方を選んだ -->
+        <Label Name="mVersion" Content="(mVersion)" HorizontalAlignment="Right" Margin="0,97,10,0" VerticalAlignment="Top" Width="90" Height="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1" />
+        <StatusBar x:Name="mStatusBar" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Height="24" Background="Teal" Foreground="White" FontFamily="Meiryo" FontSize="12">
+            <TextBlock x:Name="mStatusBarText" Text="(mStatusBarText)" Padding="3,0" />
+            <TextBlock x:Name="mStatusBarTextAlt" Text="(mStatusBarTextAlt)" Foreground="Red" />
+        </StatusBar>
+    </Grid>
+</Window>
