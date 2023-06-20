@@ -844,25 +844,22 @@ namespace taskKiller
                     xFile.CopyTo (xNewPath);
             }
 
-            // Sat, 30 Mar 2019 03:13:39 GMT
-            // テーマのファイルが ExpressionDark.xaml だけから増えそうなので、ディレクトリーをスキャンしてのコピーに変更
-            // これらのファイルは共通なので他のところに置いてパスだけ指定できるようにする選択肢もあるが、
-            // サブタスクリストの作成時の処理がややこしくなるのでシンプルにいく
-
-            foreach (FileInfo xFile in new DirectoryInfo (ProgramDirectoryPath).GetFiles ("*.xaml"))
-            {
-                string xNewPath = Path.Combine (xSubtasksDirectoryPath, xFile.Name);
-
-                if (!File.Exists (xNewPath))
-                    xFile.CopyTo (xNewPath);
-            }
-
             // .config が存在しないのは、よくあること
             if (xConfigFile.Exists && !File.Exists (xSubtasksConfigFilePath))
                 xConfigFile.CopyTo (xSubtasksConfigFilePath);
 
             if (xNekoteConfigFile.Exists && !File.Exists (xSubtasksNekoteConfigFilePath))
                 xNekoteConfigFile.CopyTo (xSubtasksNekoteConfigFilePath);
+
+            // 残りの *.config をコピー
+
+            foreach (FileInfo xFile in new DirectoryInfo (ProgramDirectoryPath).GetFiles ("*.config"))
+            {
+                string xNewPath = Path.Combine (xSubtasksDirectoryPath, xFile.Name);
+
+                if (!File.Exists (xNewPath))
+                    xFile.CopyTo (xNewPath);
+            }
 
             if (!File.Exists (xSubtasksSettingsFilePath))
             {

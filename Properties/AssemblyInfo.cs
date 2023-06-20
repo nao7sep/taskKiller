@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Yoshinao Inoguchi")]
 [assembly: AssemblyProduct ("taskKiller")]
-[assembly: AssemblyCopyright ("© 2018-2022 Yoshinao Inoguchi")]
+[assembly: AssemblyCopyright ("© 2018-2023 Yoshinao Inoguchi")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -49,5 +49,5 @@ using System.Windows;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion ("0.52")]
-[assembly: AssemblyFileVersion ("0.52")]
+[assembly: AssemblyVersion ("0.53")]
+[assembly: AssemblyFileVersion ("0.53")]

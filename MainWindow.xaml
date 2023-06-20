@@ -12,9 +12,6 @@
             <ColumnDefinition x:Name="mRightColumn" Width="2*" />
         </Grid.ColumnDefinitions>
         <ListBox x:Name="mTasks" Margin="10,10,120,34" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="mTasks_SelectionChanged" PreviewKeyDown="mTasks_PreviewKeyDown" PreviewMouseDown="mTasks_PreviewMouseDown">
-            <!-- Fri, 28 Jun 2019 20:55:37 GMT
-            // 全面的に書き直し、「ListBoxItem に関する紆余曲折.txt」もそうした
-            // こちらにコメントを書くとうるさくなるので、テキストファイルの方に全て書く -->
             <ListBox.Resources>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Template">
