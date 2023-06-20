@@ -4,7 +4,7 @@ Compiled
 [Copy]
 bin\Release > Compiled
 
-// 通常、.pdb ファイルを残すが、このプロジェクトはもう落ちなくなっているので不要
+// 通常、.pdb ファイルを残すが、このプロジェクトはメインストリームでないため不要
 
 [Delete]
 Compiled/BouncyCastle.Crypto.xml
