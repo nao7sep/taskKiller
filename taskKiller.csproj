@@ -106,6 +106,7 @@
     <Compile Include="ConfirmationWindow.xaml.cs">
       <DependentUpon>ConfirmationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="iLogger.cs" />
     <Compile Include="iMail.cs" />
     <Compile Include="iMailMessage.cs" />

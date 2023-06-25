@@ -25,12 +25,12 @@ namespace taskKiller
 
         public static bool ContinuesSendingMessages { get; set; }
 
-        private static Queue <iMailMessage> mMessagesToSend = new Queue <iMailMessage> ();
+        private static readonly Queue <iMailMessage> mMessagesToSend = new Queue <iMailMessage> ();
 
         // ログファイルが出力されるため、これも必要になってから初期化
         private static SmtpClient mClient = null;
 
-        private static List <iMailMessage> mSentMessages = new List <iMailMessage> ();
+        private static readonly List <iMailMessage> mSentMessages = new List <iMailMessage> ();
 
         private static Button mButton = null;
 
