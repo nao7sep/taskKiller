@@ -2025,5 +2025,8 @@ namespace taskKiller
 
             return xFailedFilePaths;
         }
+
+        // これが null でなければ、ウィンドウのロード時にタスクの選択が試みられる
+        public static Guid? InitiallySelectedTasksGuid;
     }
 }

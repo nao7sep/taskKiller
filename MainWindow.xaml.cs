@@ -376,6 +376,21 @@ namespace taskKiller
                 }
 
                 mCreateTask.Focus ();
+
+                if (iUtility.InitiallySelectedTasksGuid != null)
+                {
+                    for (int temp = 0; temp < mTasks.Items.Count; temp ++)
+                    {
+                        iTaskInfo xTask = (iTaskInfo) mTasks.Items [temp];
+
+                        if (xTask.Guid == iUtility.InitiallySelectedTasksGuid)
+                        {
+                            iUtility.SelectItem (mTasks, temp, true);
+                            break;
+                        }
+                    }
+                }
+
                 iUpdateControls ();
                 // iUpdateStatusBar ();
 

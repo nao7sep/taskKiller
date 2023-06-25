@@ -144,6 +144,17 @@ namespace taskKiller
                     }
                 }
 
+                // taskKiller のバイナリーが古いまま新たなパラメーターを指定しても落ちないように数を増やす
+
+                else if (xArgs.Length == 3)
+                {
+                    if (xArgs [1].Equals ("-SelectTask", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (Guid.TryParseExact (xArgs [2], "D", out Guid xResult))
+                            iUtility.InitiallySelectedTasksGuid = xResult;
+                    }
+                }
+
                 // 設定などの読み込みより先にファイルを移動
                 iUtility.MoveOldFiles ();
 
