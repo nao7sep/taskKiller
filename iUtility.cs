@@ -8,6 +8,7 @@ using Nekote;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
@@ -1139,7 +1140,7 @@ namespace taskKiller
             builder.AppendLine ("</html>");
         }
 
-        public static void GenerateReports ()
+        public static void GenerateReports (bool createsOrDeletesCompletedFile)
         {
             if (Directory.Exists (TasksDirectoryPath))
             {
@@ -1239,6 +1240,52 @@ namespace taskKiller
                 }
 
                 else nFile.Delete (xReportFilePath);
+
+                // ObservableCollection の Tasks には最新のデータが入っていると考えてよさそうだが、処理済みのデータはどこにもない
+                // だから GenerateReports は、負荷を覚悟で全てのタスクのファイルを読み直している
+                // 同じことをほかのところでもやると負荷が倍増なので、Completed.txt の処理をここにねじ込んだ
+
+                // 未処理のものがなく、処理済みのものが少なくとも一つはあり、最後に処理されたものが1週間以上経過しているなら、Completed.txt を出力
+                // そうでないなら消す
+                // 少なくとも一つというのは、Max の処理に必要なだけでなく、
+                //     未処理も処理済みもゼロの、まだ使われていないだけのタスクリストで Completed.txt ができるのはおかしいため
+
+                // このファイルは、runAll, tk2Text, tkView などの処理対象を減らして負荷を軽減するためのもの
+                // 最後に処理されてから1週間とするのは、その間はまだ runAll で開かれたり tk2Text でログが出力されたりしてほしいため
+
+                // この猶予を設けない場合、
+                //     runAll がすぐにそのタスクリストを開かなくなるのは大きな問題でないが、すぐにそのプロジェクトのことを忘れてのやり残しが発生する可能性はある（小ダメージ）
+                //     tk2Text がすぐにログを出力しなくなるのは、全てが処理されてからの最新のログにならないという致命的な問題がある（大ダメージ）
+                //     tkView がすぐにロードしなくなるのは、「処理済み」のところが元々そういう仕様（全て処理済みなら一つも入らない）なので問題なし（ダメージなし）
+
+                // 実際の長期運用においては、一過性のプロジェクトのタスクリストをいずれはアーカイブする
+                // tk2Text は、「元データがあればログを更新」であり、「元データがなくなっていればログの方も消す」ということはしない
+                // ただ、プロジェクトが終わり次第すぐにアーカイブするのでは、やり残しに気づいたときに復元の処理がめんどくさい
+                // かといって、しばらく経ってからのアーカイブを忘れないようにどこかで管理するのは、そのプロジェクトのタスクリストなしではめんどくさい
+
+                // 完了後も1週間くらいはロードされ、それ以降の runAll 後に taskKiller が閉じられると同時に Completed.txt が出力され、
+                //     それまでの間にログは出力されていて、その後、runAll, tk2Text, tkView のいずれも処理が軽くなり、
+                //     それから数ヶ月が経った頃に思いつきでゴソッとアーカイブする、というのが、おそらく最も効率的
+
+                if (createsOrDeletesCompletedFile)
+                {
+                    string xCompletedFilePath = Path.Combine (ProgramDirectoryPath, "Completed.txt");
+
+                    if (Tasks.Count == 0 &&
+                        xTasks.Count >= 1 &&
+                        xTasks.Max (x => x.HandlingUtc.Value) <= DateTime.UtcNow.AddDays (-7).Ticks)
+                    {
+                        // 長さ0で問題なさそう
+                        // Running.txt もそうなっている
+                        nFile.Create (xCompletedFilePath);
+                    }
+
+                    else
+                    {
+                        if (nFile.Exists (xCompletedFilePath))
+                            nFile.Delete (xCompletedFilePath);
+                    }
+                }
             }
 
             // Thu, 12 Sep 2019 00:38:33 GMT
@@ -1975,14 +2022,24 @@ namespace taskKiller
 
         public static bool IsAnyNearbyBinaryFileOld (int upperDirectoryScanningDepth)
         {
-            // ファイルシステムのタイムスタンプの精度を考慮し、適当に2秒引いておく
-            DateTime xLastWriteTimeUtc = File.GetLastWriteTimeUtc (Path.Combine (ProgramDirectoryPath, "taskKiller.exe")).AddSeconds (-2);
-
-            return iGetDirectoriesToScan (upperDirectoryScanningDepth).Any (x =>
+            try
             {
-                // taskKiller.exe の存在チェックは済んでいる
-                return File.GetLastWriteTimeUtc (Path.Combine (x.FullName, "taskKiller.exe")) <= xLastWriteTimeUtc;
-            });
+                // ファイルシステムのタイムスタンプの精度を考慮し、適当に2秒引いておく
+                DateTime xLastWriteTimeUtc = File.GetLastWriteTimeUtc (Path.Combine (ProgramDirectoryPath, "taskKiller.exe")).AddSeconds (-2);
+
+                return iGetDirectoriesToScan (upperDirectoryScanningDepth).Any (x =>
+                {
+                    // taskKiller.exe の存在チェックは済んでいる
+                    return File.GetLastWriteTimeUtc (Path.Combine (x.FullName, "taskKiller.exe")) <= xLastWriteTimeUtc;
+                });
+            }
+
+            catch
+            {
+                // タスクリストのディレクトリーをデスクトップに置いて起動すると必ずエラーになっていた
+                // パーミッションの問題が恒常的に発生するところにタスクリストを配置することはない
+                return false;
+            }
         }
 
         public static List <string> UpdateNearbyBinaryFiles (int upperDirectoryScanningDepth)
@@ -2028,5 +2085,64 @@ namespace taskKiller
 
         // これが null でなければ、ウィンドウのロード時にタスクの選択が試みられる
         public static Guid? InitiallySelectedTasksGuid;
+
+        private static void iAttachFile (string path, string newRelativePath)
+        {
+            // パスが長すぎる場合の例外は、呼び出し側の catch により捕捉され、ほかのエラーと共通のメッセージによりユーザーに伝わる
+
+            // newRelativePath のディレクトリー区切り文字が / なのは問題なし
+            // 実際動くし、Path.Combine → Path.CombineInternal → Path.JoinInternal においても両方の区切り文字が考慮されている
+            // .NET 全体で、「ディレクトリー区切り文字がもう一つの方だから落ちる」が回避されている可能性が高い
+
+            // Path.cs
+            // https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/IO/Path.cs
+
+            nFile.Copy (path, Path.Combine (ProgramDirectoryPath, newRelativePath), overwrites: false);
+
+            string xInfoFilePath = Path.Combine (ProgramDirectoryPath, "Files", "Info.txt");
+
+            StringBuilder xBuilder = new StringBuilder ();
+
+            if (nFile.Exists (xInfoFilePath))
+                xBuilder.AppendLine ();
+
+            // "O" なら 2023-06-26T05:32:10.9033302Z のように Z が入り、UTC であることが明示される
+            // キー側の識別子に "utc" を入れるのは必須でない
+
+            xBuilder.AppendLine ($"[{newRelativePath}]");
+            xBuilder.AppendLine ("AttachedAt:" + DateTime.UtcNow.ToString ("O", CultureInfo.InvariantCulture));
+            xBuilder.AppendLine ("ModifiedAt:" + nFile.GetLastWriteUtc (path).ToString ("O", CultureInfo.InvariantCulture));
+
+            nFile.AppendAllText (xInfoFilePath, xBuilder.ToString ());
+        }
+
+        public static void AttachFile (string path)
+        {
+            string xFileName = Path.GetFileName (path);
+
+            if (string.Equals (xFileName, "Info.txt", StringComparison.OrdinalIgnoreCase) == false)
+            {
+                string xNewRelativeFilePath = $"Files/{xFileName}",
+                    xNewFilePath = Path.Combine (ProgramDirectoryPath, xNewRelativeFilePath);
+
+                if (nFile.CanCreate (xNewFilePath))
+                {
+                    iAttachFile (path, xNewRelativeFilePath);
+                    return;
+                }
+            }
+
+            for (int temp = 1; ; temp ++)
+            {
+                string xNewRelativeFilePath = $"Files/{temp.ToString (CultureInfo.InvariantCulture)}/{xFileName}",
+                    xNewFilePath = Path.Combine (ProgramDirectoryPath, xNewRelativeFilePath);
+
+                if (nFile.CanCreate (xNewFilePath))
+                {
+                    iAttachFile (path, xNewRelativeFilePath);
+                    return;
+                }
+            }
+        }
     }
 }

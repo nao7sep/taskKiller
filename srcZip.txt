@@ -7,8 +7,17 @@ bin\Release > Compiled
 // 通常、.pdb ファイルを残すが、このプロジェクトはメインストリームでないため不要
 
 [Delete]
+Compiled/Backups
+Compiled/Files
+Compiled/Logs
+Compiled/Ordering
+Compiled/Pages
+Compiled/SmtpLogs
+Compiled/States
+Compiled/Tasks
 Compiled/BouncyCastle.Crypto.xml
 Compiled/BouncyCastle.Cryptography.xml
+Compiled/Completed.txt
 Compiled/Magick.NET-Q8-AnyCPU.dll
 Compiled/Magick.NET-Q8-AnyCPU.xml
 Compiled/Magick.NET.Core.dll
@@ -22,6 +31,7 @@ Compiled/NAudio.Wasapi.dll
 Compiled/NAudio.WinMM.dll
 Compiled/Nekote2018.pdb
 Compiled/Nekote2018.xml
+Compiled/Settings.txt
 Compiled/System.Data.SQLite.dll
 Compiled/System.Data.SQLite.xml
 Compiled/System.Formats.Asn1.xml

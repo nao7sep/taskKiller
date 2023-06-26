@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:taskKiller"
         mc:Ignorable="d"
-        Title="taskKiller" Width="1280" Height="720" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="Window_Loaded" LocationChanged="mWindow_LocationChanged" SizeChanged="mWindow_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown" Closed="mWindow_Closed">
+        Title="taskKiller" Width="1280" Height="720" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="Window_Loaded" LocationChanged="mWindow_LocationChanged" SizeChanged="mWindow_SizeChanged" PreviewKeyDown="Window_PreviewKeyDown" Closed="mWindow_Closed" AllowDrop="True" PreviewDragEnter="mWindow_PreviewDragEnter" PreviewDragOver="mWindow_PreviewDragOver" PreviewDrop="mWindow_PreviewDrop" PreviewDragLeave="mWindow_PreviewDragLeave">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="mLeftColumn" Width="3*" />

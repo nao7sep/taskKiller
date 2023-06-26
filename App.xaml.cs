@@ -221,7 +221,11 @@ namespace taskKiller
                 // MainWindow でなく、こちらで HTML レポートを生成
                 // 多数のメールの送信を開始した直後にプログラムを閉じた場合を考え、
                 // 送信のスレッドを止めるより先にレポートの生成を行っている
-                iUtility.GenerateReports ();
+
+                // 処理済みのタスクのデータをロードする処理が既に行われているため、
+                //     そこで Completed.txt を作ったり消したりも行うように
+
+                iUtility.GenerateReports (createsOrDeletesCompletedFile: true);
 
                 // Sat, 20 Oct 2018 01:14:05 GMT
                 // 外出時に Dropbox で全てのタスクを見られるようにしておく

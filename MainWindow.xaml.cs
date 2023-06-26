@@ -1611,6 +1611,9 @@ namespace taskKiller
                     e.Handled = true;
                 }
 
+                // 無駄なコードに思えるが、実害もなさそうなので放置
+                // ちゃんとした理由があって実装した可能性もある
+
                 else if (e.Key == Key.G)
                 {
                     if (iUtility.AreModifiersRequiredForShortcuts == false ||
@@ -1618,7 +1621,7 @@ namespace taskKiller
                     {
                         if (mWindow.IsFocused)
                         {
-                            Clipboard.SetText ($"// {iSettings.Settings ["Title"]}\r\n{iSettings.Settings ["Guid"]}");
+                            Clipboard.SetText ($"{iSettings.Settings ["Guid"]}{Environment.NewLine}{iSettings.Settings ["Title"]}");
                             e.Handled = true;
                         }
                     }
@@ -1930,7 +1933,7 @@ namespace taskKiller
                         if (mTasks.SelectedItem != null)
                         {
                             iTaskInfo xTask = (iTaskInfo) mTasks.SelectedItem;
-                            Clipboard.SetText ($"//\x20{xTask.Content}{Environment.NewLine}{xTask.Guid.nToString ()}");
+                            Clipboard.SetText ($"{xTask.Guid.nToString ()}{Environment.NewLine}{xTask.Content}");
                             e.Handled = true;
                         }
                     }
@@ -2026,7 +2029,9 @@ namespace taskKiller
                             // 先頭行だけでよい
                             // また、タスク名もあった方が管理性が高い
 
-                            Clipboard.SetText ($"//\x20{xNote.Task.Content}{Environment.NewLine}//\x20{xNote.Content.nSplitIntoLines () [0]} ...{Environment.NewLine}{xNote.Guid.nToString ()}");
+                            string [] xNoteContentLines = xNote.Content.nSplitIntoLines ();
+
+                            Clipboard.SetText ($"{xNote.Guid.nToString ()}{Environment.NewLine}{xNote.Task.Content}{Environment.NewLine}{xNoteContentLines [0]}{(xNoteContentLines.Length >= 2 ? " ..." : string.Empty)}");
                             e.Handled = true;
                         }
                     }
@@ -2083,6 +2088,126 @@ namespace taskKiller
             try
             {
                 mNotes.Focus ();
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        // イベントハンドラーの順序がゴチャゴチャなので、ドラッグ＆ドロップに関するものも IDE が生成した場所のまま
+
+        private void mWindow_PreviewDragEnter (object sender, DragEventArgs e)
+        {
+            try
+            {
+                if (e.Data.GetDataPresent (DataFormats.FileDrop))
+                    e.Effects = DragDropEffects.Copy;
+
+                else e.Effects = DragDropEffects.None;
+
+                e.Handled = true;
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        private void mWindow_PreviewDragOver (object sender, DragEventArgs e)
+        {
+            try
+            {
+                if (e.Data.GetDataPresent (DataFormats.FileDrop))
+                    e.Effects = DragDropEffects.Copy;
+
+                else e.Effects = DragDropEffects.None;
+
+                e.Handled = true;
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        private void mWindow_PreviewDrop (object sender, DragEventArgs e)
+        {
+            try
+            {
+                if (e.Data.GetDataPresent (DataFormats.FileDrop))
+                {
+                    string [] xFilePaths = (string []) e.Data.GetData (DataFormats.FileDrop);
+
+                    if (xFilePaths.Length > 0)
+                    {
+                        if (xFilePaths.Length >= 2)
+                        {
+                            // 数値的なソートでない
+                            // nString.CompareNumerically があるが、信頼性が十分でない
+                            Array.Sort (xFilePaths, StringComparer.OrdinalIgnoreCase);
+                        }
+
+                        List <string>
+                            xAttachedFileNames = new List <string> (),
+                            xNotAttachedFileNames = new List <string> ();
+
+                        foreach (string xFilePath in xFilePaths)
+                        {
+                            try
+                            {
+                                iUtility.AttachFile (xFilePath);
+                                xAttachedFileNames.Add (Path.GetFileName (xFilePath));
+                            }
+
+                            catch
+                            {
+                                xNotAttachedFileNames.Add (Path.GetFileName (xFilePath));
+                            }
+                        }
+
+                        StringBuilder xBuilder = new StringBuilder ();
+
+                        if (xAttachedFileNames.Count > 0)
+                        {
+                            xBuilder.AppendLine ("ファイルを添付しました:");
+
+                            foreach (string xAttachedFileName in xAttachedFileNames)
+                                xBuilder.AppendLine ("    " + xAttachedFileName);
+                        }
+
+                        xBuilder.AppendLine ();
+
+                        if (xNotAttachedFileNames.Count > 0)
+                        {
+                            xBuilder.AppendLine ("ファイルを添付できませんでした:");
+
+                            foreach (string xNotAttachedFileName in xNotAttachedFileNames)
+                                xBuilder.AppendLine ("    " + xNotAttachedFileName);
+                        }
+
+                        MessageBox.Show (this, xBuilder.ToString ().Trim ());
+                    }
+                }
+
+                e.Handled = true;
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        private void mWindow_PreviewDragLeave (object sender, DragEventArgs e)
+        {
+            try
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
             }
 
             catch (Exception exception)
