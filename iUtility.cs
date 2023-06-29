@@ -2110,6 +2110,7 @@ namespace taskKiller
             // キー側の識別子に "utc" を入れるのは必須でない
 
             xBuilder.AppendLine ($"[{newRelativePath}]");
+            xBuilder.AppendLine ("Guid:" + Guid.NewGuid ().ToString ("D"));
             xBuilder.AppendLine ("AttachedAt:" + DateTime.UtcNow.ToString ("O", CultureInfo.InvariantCulture));
             xBuilder.AppendLine ("ModifiedAt:" + nFile.GetLastWriteUtc (path).ToString ("O", CultureInfo.InvariantCulture));
 
