@@ -2026,12 +2026,9 @@ namespace taskKiller
                             // Thu, 07 Nov 2019 04:28:00 GMT
                             // やや雑だが、この実装でメモの各行に // がつき、余計な空白を削れる
 
-                            // 先頭行だけでよい
-                            // また、タスク名もあった方が管理性が高い
+                            // タスク名もあった方が管理性が高い
 
-                            string [] xNoteContentLines = xNote.Content.nSplitIntoLines ();
-
-                            Clipboard.SetText ($"{xNote.Guid.nToString ()}{Environment.NewLine}{xNote.Task.Content}{Environment.NewLine}{xNoteContentLines [0]}{(xNoteContentLines.Length >= 2 ? " ..." : string.Empty)}");
+                            Clipboard.SetText ($"{xNote.Guid.nToString ()}{Environment.NewLine}{xNote.Task.Content}{Environment.NewLine}{iUtility.ShortenNote (xNote.Content)}");
                             e.Handled = true;
                         }
                     }
@@ -2144,6 +2141,44 @@ namespace taskKiller
 
                     if (xFilePaths.Length > 0)
                     {
+                        Guid? xParentGuid = null;
+
+                        if (mTasks.SelectedItem != null)
+                        {
+                            ListBoxItem xItem = (ListBoxItem) mTasks.ItemContainerGenerator.ContainerFromItem (mTasks.SelectedItem);
+
+                            if (xItem.IsFocused)
+                            {
+                                iTaskInfo xTask = (iTaskInfo) mTasks.SelectedItem;
+
+                                if (MessageBox.Show (this, $"選択されているタスクにファイルを添付しますか？{Environment.NewLine}タスク: {xTask.Content}", "ファイルの添付", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                                    return;
+
+                                xParentGuid = xTask.Guid;
+                                goto AttachFiles;
+                            }
+                        }
+
+                        if (mNotes.SelectedItem != null)
+                        {
+                            ListBoxItem xItem = (ListBoxItem) mNotes.ItemContainerGenerator.ContainerFromItem (mNotes.SelectedItem);
+
+                            if (xItem.IsFocused)
+                            {
+                                iNoteInfo xNote = (iNoteInfo) mNotes.SelectedItem;
+
+                                if (MessageBox.Show (this, $"選択されているメモにファイルを添付しますか？{Environment.NewLine}メモ: {iUtility.ShortenNote (xNote.Content)}", "ファイルの添付", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                                    return;
+
+                                xParentGuid = xNote.Guid;
+                                goto AttachFiles;
+                            }
+                        }
+
+                        if (MessageBox.Show (this, $"タスクリスト全体にファイルを添付しますか？{Environment.NewLine}タスクリスト: {iSettings.Settings ["Title"]}", "ファイルの添付", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                            return;
+
+                    AttachFiles:
                         if (xFilePaths.Length >= 2)
                         {
                             // 数値的なソートでない
@@ -2159,7 +2194,7 @@ namespace taskKiller
                         {
                             try
                             {
-                                iUtility.AttachFile (xFilePath);
+                                iUtility.AttachFile (xFilePath, xParentGuid);
                                 xAttachedFileNames.Add (Path.GetFileName (xFilePath));
                             }
 
@@ -2192,13 +2227,17 @@ namespace taskKiller
                         MessageBox.Show (this, xBuilder.ToString ().Trim ());
                     }
                 }
-
-                e.Handled = true;
             }
 
             catch (Exception exception)
             {
                 iUtility.HandleException (exception, this);
+            }
+
+            finally
+            {
+                // ほかも finally にするべきだろうが、めんどくさい
+                e.Handled = true;
             }
         }
 

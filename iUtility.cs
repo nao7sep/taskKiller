@@ -2086,7 +2086,7 @@ namespace taskKiller
         // これが null でなければ、ウィンドウのロード時にタスクの選択が試みられる
         public static Guid? InitiallySelectedTasksGuid;
 
-        private static void iAttachFile (string path, string newRelativePath)
+        private static void iAttachFile (string path, Guid? parentGuid, string newRelativePath)
         {
             // パスが長すぎる場合の例外は、呼び出し側の catch により捕捉され、ほかのエラーと共通のメッセージによりユーザーに伝わる
 
@@ -2111,13 +2111,14 @@ namespace taskKiller
 
             xBuilder.AppendLine ($"[{newRelativePath}]");
             xBuilder.AppendLine ("Guid:" + Guid.NewGuid ().ToString ("D"));
+            xBuilder.AppendLine ("ParentGuid:" + (parentGuid != null ? parentGuid.Value.ToString ("D") : string.Empty));
             xBuilder.AppendLine ("AttachedAt:" + DateTime.UtcNow.ToString ("O", CultureInfo.InvariantCulture));
             xBuilder.AppendLine ("ModifiedAt:" + nFile.GetLastWriteUtc (path).ToString ("O", CultureInfo.InvariantCulture));
 
             nFile.AppendAllText (xInfoFilePath, xBuilder.ToString ());
         }
 
-        public static void AttachFile (string path)
+        public static void AttachFile (string path, Guid? parentGuid)
         {
             string xFileName = Path.GetFileName (path);
 
@@ -2128,7 +2129,7 @@ namespace taskKiller
 
                 if (nFile.CanCreate (xNewFilePath))
                 {
-                    iAttachFile (path, xNewRelativeFilePath);
+                    iAttachFile (path, parentGuid, xNewRelativeFilePath);
                     return;
                 }
             }
@@ -2140,10 +2141,23 @@ namespace taskKiller
 
                 if (nFile.CanCreate (xNewFilePath))
                 {
-                    iAttachFile (path, xNewRelativeFilePath);
+                    iAttachFile (path, parentGuid, xNewRelativeFilePath);
                     return;
                 }
             }
+        }
+
+        public static string ShortenNote (string value)
+        {
+            string [] xLines = value.nSplitIntoLines ();
+
+            // 64では MessageBox が折り返されるので半分に
+            // 30でもよいが、32ではいけない理由もないので適当に
+
+            if (xLines [0].Length > 32)
+                return xLines [0].Substring (0, 32) + " ...";
+
+            else return xLines [0] + (xLines.Length >= 2 ? " ..." : string.Empty);
         }
     }
 }
