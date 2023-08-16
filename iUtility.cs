@@ -677,14 +677,22 @@ namespace taskKiller
             // GUID をつけ直すことも可能だが、さすがにこだわりすぎの実装になる
             File.Move (xPath, xNewPath);
 
-            // さらに状態のファイルを移動
+            // 追記: さらに状態のファイルを移動
+            // ないなら以前と同様、状態が Later になる
 
             string xStateFileName = task.Guid.nToString () + ".txt",
-                xOldStateFilePath = nApplication.MapPath ("States", xStateFileName),
-                xNewStateFilePath = nPath.Combine (nPath.GetDirectoryPath (directoryPath), "States", xStateFileName);
+                xOldStateFilePath = nApplication.MapPath ("States", xStateFileName);
 
-            nDirectory.CreateForFile (xNewStateFilePath);
-            nFile.Move (xOldStateFilePath, xNewStateFilePath);
+            if (nFile.Exists (xOldStateFilePath))
+            {
+                string xNewStateFilePath = nPath.Combine (nPath.GetDirectoryPath (directoryPath), "States", xStateFileName);
+
+                if (nFile.CanCreate (xNewStateFilePath))
+                {
+                    nDirectory.CreateForFile (xNewStateFilePath);
+                    nFile.Move (xOldStateFilePath, xNewStateFilePath);
+                }
+            }
         }
 
         public static bool IsValidDirectoryName (string text)
