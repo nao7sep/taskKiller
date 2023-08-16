@@ -58,6 +58,10 @@ namespace taskKiller
                     mDefaultSettings ["NoteCreationWindowWidth"] = null;
                     mDefaultSettings ["NoteCreationWindowHeight"] = null;
 
+                    mDefaultSettings ["TextFormattingMode"] = null;
+                    mDefaultSettings ["TextHintingMode"] = null;
+                    mDefaultSettings ["TextRenderingMode"] = null;
+
                     // このまま何もしなければ、デフォルトの Yu Gothic UI が使われる
                     mDefaultSettings ["FontFamily"] = null;
                     // UI 以外の、リストやテキスト入力欄のことを便宜的にこう表現している

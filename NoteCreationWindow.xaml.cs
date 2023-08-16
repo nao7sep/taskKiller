@@ -91,6 +91,10 @@ namespace taskKiller
                     mIsChecked.Foreground = iUtility.TextBrush;
                 }
 
+                TextOptions.SetTextFormattingMode (this, iUtility.TextFormattingMode);
+                TextOptions.SetTextHintingMode (this, iUtility.TextHintingMode);
+                TextOptions.SetTextRenderingMode (this, iUtility.TextRenderingMode);
+
                 if (string.IsNullOrEmpty (iSettings.Settings ["FontFamily"]) == false)
                     FontFamily = new FontFamily (iSettings.Settings ["FontFamily"]);
 

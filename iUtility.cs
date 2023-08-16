@@ -676,6 +676,15 @@ namespace taskKiller
             // ファイル名の衝突は、ありえないことでないが、GUID なのでおそらく大丈夫
             // GUID をつけ直すことも可能だが、さすがにこだわりすぎの実装になる
             File.Move (xPath, xNewPath);
+
+            // さらに状態のファイルを移動
+
+            string xStateFileName = task.Guid.nToString () + ".txt",
+                xOldStateFilePath = nApplication.MapPath ("States", xStateFileName),
+                xNewStateFilePath = nPath.Combine (nPath.GetDirectoryPath (directoryPath), "States", xStateFileName);
+
+            nDirectory.CreateForFile (xNewStateFilePath);
+            nFile.Move (xOldStateFilePath, xNewStateFilePath);
         }
 
         public static bool IsValidDirectoryName (string text)
@@ -2158,6 +2167,70 @@ namespace taskKiller
                 return xLines [0].Substring (0, 32) + " ...";
 
             else return xLines [0] + (xLines.Length >= 2 ? " ..." : string.Empty);
+        }
+
+        private static TextFormattingMode? mTextFormattingMode = null;
+
+        public static TextFormattingMode TextFormattingMode
+        {
+            get
+            {
+                if (mTextFormattingMode == null)
+                {
+                    if (Enum.TryParse (iSettings.Settings ["TextFormattingMode"], out TextFormattingMode xResult))
+                        mTextFormattingMode = xResult;
+
+                    // return new TextFormatterImp(soleContext, TextFormattingMode.Ideal) というコードがある
+                    // ほかに決め打ちになっているところはないようなので、Ideal をデフォルト値とみなす
+
+                    // TextFormatter.cs
+                    // https://source.dot.net/#PresentationCore/System/Windows/Media/textformatting/TextFormatter.cs
+
+                    // プログラム起動時の値がこうなっていることも確認した
+
+                    else mTextFormattingMode = TextFormattingMode.Ideal;
+                }
+
+                return mTextFormattingMode.Value;
+            }
+        }
+
+        private static TextHintingMode? mTextHintingMode = null;
+
+        public static TextHintingMode TextHintingMode
+        {
+            get
+            {
+                if (mTextHintingMode == null)
+                {
+                    if (Enum.TryParse (iSettings.Settings ["TextHintingMode"], out TextHintingMode xResult))
+                        mTextHintingMode = xResult;
+
+                    // プログラム起動時の値がこうなっていることを確認した
+                    else mTextHintingMode = TextHintingMode.Auto;
+                }
+
+                return mTextHintingMode.Value;
+            }
+        }
+
+        private static TextRenderingMode? mTextRenderingMode = null;
+
+        public static TextRenderingMode TextRenderingMode
+        {
+            get
+            {
+                if (mTextRenderingMode == null)
+                {
+                    if (Enum.TryParse (iSettings.Settings ["TextRenderingMode"], out TextRenderingMode xResult))
+                        mTextRenderingMode = xResult;
+
+                    // プログラム起動時の値がこうなっていることを確認した
+                    else mTextRenderingMode = TextRenderingMode.Auto;
+                }
+
+                return mTextRenderingMode.Value;
+            }
         }
     }
 }
