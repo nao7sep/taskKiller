@@ -1218,13 +1218,6 @@ namespace taskKiller
 
             TaskExportingTo_Window xWindow = new TaskExportingTo_Window (this);
             xWindow.mTaskContent.Text = xSelectedTask.Content;
-            iSubtasksLists xLists = new iSubtasksLists (nApplication.DirectoryPath);
-
-            foreach (string xTitle in xLists.GetSortedTitles ())
-                // Wed, 30 Jan 2019 07:23:19 GMT
-                // パスを入れる必要性が今のところないが、
-                // もしかすると派生開発で既存のタスク数を表示する程度はあり得る
-                xWindow.mSubtasksLists.Items.Add (new iSubtaskListInfo (xTitle, xLists.Info [xTitle]));
 
             // Wed, 30 Jan 2019 08:19:54 GMT
             // ここで Focus などを呼ぼうとしても、コンテナーを取れない

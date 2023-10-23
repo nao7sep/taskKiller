@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using System.Globalization;
+using Nekote;
+using System.IO;
 
 namespace taskKiller
 {
@@ -57,6 +59,8 @@ namespace taskKiller
                 }
 
                 ShowInTaskbar = false;
+
+                mExcludesInvisibleLists.IsChecked = true;
             }
 
             catch (Exception exception)
@@ -119,6 +123,53 @@ namespace taskKiller
         {
             try
             {
+                iUpdateControls ();
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        // 選択が失われるのは仕様とする
+        // すでにリストに含まれるところへの移動なら、チェック状態を変更しない
+        // なくてチェック状態を変更するなら、「一部 → 全て」であり、すでに選択されているものは答えでない
+        // チェックボックスの状態が保存されるなら選択の復元も便利だが、
+        //     そういうのは古いプロジェクトの派生開発が多く、cleanDesk の実行によりソースもタスクリストも非表示でなくなっている
+
+        private void mExcludesInvisibleLists_Checked (object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mSubtasksLists.Items.Clear ();
+                iSubtasksLists xLists = new iSubtasksLists (nApplication.DirectoryPath);
+
+                foreach (string xTitle in xLists.GetSortedTitles ())
+                {
+                    if ((nFile.GetAttributes (xLists.Info [xTitle]) & (FileAttributes.Hidden | FileAttributes.System)) == 0)
+                        mSubtasksLists.Items.Add (new iSubtaskListInfo (xTitle, xLists.Info [xTitle]));
+                }
+
+                iUpdateControls ();
+            }
+
+            catch (Exception exception)
+            {
+                iUtility.HandleException (exception, this);
+            }
+        }
+
+        private void mExcludesInvisibleLists_Unchecked (object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mSubtasksLists.Items.Clear ();
+                iSubtasksLists xLists = new iSubtasksLists (nApplication.DirectoryPath);
+
+                foreach (string xTitle in xLists.GetSortedTitles ())
+                    mSubtasksLists.Items.Add (new iSubtaskListInfo (xTitle, xLists.Info [xTitle]));
+
                 iUpdateControls ();
             }
 

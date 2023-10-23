@@ -64,7 +64,7 @@
         <Button x:Name="mShuffle" Content="シャッフル" HorizontalAlignment="Right" Margin="0,329,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mShuffle_Click" />
         <Button x:Name="mSubtasks" Content="新しいリスト" HorizontalAlignment="Right" Margin="0,358,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mSubtasks_Click" />
         <Button x:Name="mExport" Content="デスクトップへ" HorizontalAlignment="Right" Margin="0,387,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mExport_Click" />
-        <Button x:Name="mExportTo" Content="他リストへ" HorizontalAlignment="Right" Margin="0,416,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mExportTo_Click" />
+        <Button x:Name="mExportTo" Content="ほかリストへ" HorizontalAlignment="Right" Margin="0,416,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mExportTo_Click" />
         <Button x:Name="mMail" Content="メール" HorizontalAlignment="Right" Margin="0,445,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mMail_Click" />
         <Button x:Name="mMailNow" Content="今すぐをメール" HorizontalAlignment="Right" Margin="0,474,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mMailNow_Click" />
         <Button x:Name="mAllToFront" Content="全て最前面に" HorizontalAlignment="Right" Margin="0,503,5,0" VerticalAlignment="Top" Width="110" Height="24" Click="mAllToFront_Click" />

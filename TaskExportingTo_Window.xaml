@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:taskKiller"
         mc:Ignorable="d"
-        Title="他リストへ" Width="600" Height="400" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="mWindow_Loaded" PreviewKeyDown="mWindow_PreviewKeyDown">
+        Title="ほかリストへ" Width="600" Height="400" Background="Black" FontFamily="Meiryo" FontSize="12" Loaded="mWindow_Loaded" PreviewKeyDown="mWindow_PreviewKeyDown">
     <Grid>
         <TextBox x:Name="mTaskContent" Margin="10,10,10,0" VerticalAlignment="Top" Height="28" Padding="3,0" VerticalContentAlignment="Center" FontSize="15" IsTabStop="False" IsReadOnly="True" />
         <ListBox x:Name="mSubtasksLists" Margin="10,43,10,39" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="mSubtasksListsTitles_SelectionChanged">
@@ -33,6 +33,9 @@
                 </Style>
             </ListBox.Resources>
         </ListBox>
+        <StackPanel HorizontalAlignment="Right" Margin="0,0,210,9" VerticalAlignment="Bottom" Height="26" Orientation="Horizontal">
+            <CheckBox x:Name="mExcludesInvisibleLists" Content="非表示のリストを除外" Margin="5,0,10,0" VerticalAlignment="Center" Padding="3,0,0,0" VerticalContentAlignment="Center" Foreground="White" Checked="mExcludesInvisibleLists_Checked" Unchecked="mExcludesInvisibleLists_Unchecked" />
+        </StackPanel>
         <Button x:Name="mExport" Content="エクスポート" HorizontalAlignment="Right" Margin="0,0,105,10" VerticalAlignment="Bottom" Width="100" Height="24" Click="mExport_Click" />
         <Button x:Name="mCancel" Content="キャンセル" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="90" Height="24" Click="mCancel_Click" />
     </Grid>
