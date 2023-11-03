@@ -693,6 +693,13 @@ namespace taskKiller
                     nFile.Move (xOldStateFilePath, xNewStateFilePath);
                 }
             }
+
+            // 追記: タスクの移動先に Completed.txt があると消す
+
+            string xCompletedFilePath = nPath.Combine (nPath.GetDirectoryPath (directoryPath), "Completed.txt");
+
+            if (nFile.Exists (xCompletedFilePath))
+                nFile.Delete (xCompletedFilePath);
         }
 
         public static bool IsValidDirectoryName (string text)
