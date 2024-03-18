@@ -28,8 +28,6 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Nekote2018">
-      <HintPath>..\..\Nekote2018\Nekote2018\bin\Release\net8.0-windows\Nekote2018.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Nekote2018\Nekote2018\Nekote2018.csproj" />
   </ItemGroup>
 </Project>
