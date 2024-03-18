@@ -49,7 +49,7 @@ namespace taskKiller
             try
             {
                 nDirectory.Create (StatesDirectoryPath);
-                nFile.WriteAllText (GetFilePath (guidString), value.nToString ());
+                nFile.WriteAllText (GetFilePath (guidString), value.nToString (), Encoding.UTF8);
             }
 
             catch

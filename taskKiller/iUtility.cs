@@ -482,7 +482,7 @@ namespace taskKiller
                     // Thu, 12 Sep 2019 00:34:42 GMT
                     // ディレクトリーが自動的に作られず、Pages がなくて落ちたので nFile に変更
                     // File.WriteAllText (path, content, Encoding.UTF8);
-                    nFile.WriteAllText (path, content);
+                    nFile.WriteAllText (path, content, Encoding.UTF8);
 
                     // if (xPreviousLastWriteUtc != null)
                         // File.SetLastWriteTimeUtc (path, xPreviousLastWriteUtc.Value);
@@ -883,6 +883,24 @@ namespace taskKiller
                 string xNewPath = Path.Combine (xSubtasksDirectoryPath, xFile.Name);
 
                 if (!File.Exists (xNewPath))
+                    xFile.CopyTo (xNewPath);
+            }
+
+            // Added: 2024-03-18
+            // Recently migrated taskKiller from .NET Framework 4.8 to .NET 8.
+            // Now we need to copy .json files (and also .pdb files just in case).
+
+            foreach (var xFile in Directory.GetFiles(ProgramDirectoryPath).
+                Select (x => new FileInfo (x)).
+                Where (y =>
+                {
+                    return string.Equals (y.Extension, ".json", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals (y.Extension, ".pdb", StringComparison.OrdinalIgnoreCase);
+                }))
+            {
+                string xNewPath = Path.Join (xSubtasksDirectoryPath, xFile.Name);
+
+                if (File.Exists (xNewPath) == false)
                     xFile.CopyTo (xNewPath);
             }
 
@@ -1693,7 +1711,7 @@ namespace taskKiller
                 // 「バイナリーでなく、なくなると復元できないもの」にはギリギリ相当
 
                 int xDummyCount = 0;
-                iAddFile (xArchive, "Nekote.dll.config", ref xDummyCount);
+                iAddFile (xArchive, "Nekote.dll.config", ref xDummyCount); // Not used any more.
                 iAddFile (xArchive, "taskKiller.exe.config", ref xDummyCount);
                 iAddFile (xArchive, "Settings.txt", ref xDummyCount);
             }
@@ -2078,7 +2096,12 @@ namespace taskKiller
             {
                 return x.Extension.Equals (".exe", StringComparison.OrdinalIgnoreCase) ||
                     x.Extension.Equals (".dll", StringComparison.OrdinalIgnoreCase) ||
-                    x.Extension.Equals (".config", StringComparison.OrdinalIgnoreCase);
+                    x.Extension.Equals (".config", StringComparison.OrdinalIgnoreCase) ||
+
+                    // Recently migrated this app from .NET Framework 4.8 to .NET 8.
+                    x.Extension.Equals (".json", StringComparison.OrdinalIgnoreCase) ||
+                    x.Extension.Equals (".pdb", StringComparison.OrdinalIgnoreCase);
+
             });
 
             List <string> xFailedFilePaths = new List <string> ();

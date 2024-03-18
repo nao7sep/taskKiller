@@ -29,7 +29,7 @@ namespace taskKiller
                     entry.SetDateTime ("Utc", xUtc);
                     entry.SetString ("UtcString", xUtc.nToString (nDateTimeFormat.Rfc1123DateTimeUniversal));
                     string xContent = entry.nToFriendlyString ();
-                    nFile.WriteAllText (xFilePath, xContent);
+                    nFile.WriteAllText (xFilePath, xContent, Encoding.UTF8);
                     break;
                 }
             }
