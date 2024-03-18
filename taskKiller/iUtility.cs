@@ -832,6 +832,7 @@ namespace taskKiller
 
         public static void CreateSubtasksList (iTaskInfo task, bool copiesNotes)
         {
+            // Now this returns the path to the .dll file.
             FileInfo xProgramFile = new FileInfo (Assembly.GetEntryAssembly ().Location),
                 xConfigFile = new FileInfo (xProgramFile.FullName + ".config"),
                 xNekoteConfigFile = new FileInfo (nApplication.MapPath ("Nekote.dll.config"));
@@ -894,7 +895,9 @@ namespace taskKiller
                 Select (x => new FileInfo (x)).
                 Where (y =>
                 {
-                    return string.Equals (y.Extension, ".json", StringComparison.OrdinalIgnoreCase) ||
+                    // Assembly.GetEntryAssembly () now returns the path to the .dll file.
+                    return string.Equals (y.Extension, ".exe", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals (y.Extension, ".json", StringComparison.OrdinalIgnoreCase) ||
                         string.Equals (y.Extension, ".pdb", StringComparison.OrdinalIgnoreCase);
                 }))
             {

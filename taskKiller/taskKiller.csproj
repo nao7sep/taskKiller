@@ -10,7 +10,7 @@
 
     <!-- Migrated on 2024-03-12 -->
     <Company>Yoshinao Inoguchi</Company>
-    <Version>0.64</Version>
+    <Version>0.65</Version>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="Cheezen-Web-2-Check.ico" />
